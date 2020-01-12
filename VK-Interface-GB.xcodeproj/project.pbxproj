@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7603D92C23CBAED500280F80 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7603D92B23CBAED500280F80 /* Session.swift */; };
 		FB15305E23B4E5F400DED4A8 /* WhatIsNewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB15305C23B4E5F400DED4A8 /* WhatIsNewCell.swift */; };
 		FB15305F23B4E5F400DED4A8 /* WhatIsNewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = FB15305D23B4E5F400DED4A8 /* WhatIsNewCell.xib */; };
 		FB15F48323B1FB6600A77829 /* News.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FB15F48223B1FB6600A77829 /* News.storyboard */; };
@@ -49,6 +50,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		7603D92B23CBAED500280F80 /* Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
 		FB15305C23B4E5F400DED4A8 /* WhatIsNewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhatIsNewCell.swift; sourceTree = "<group>"; };
 		FB15305D23B4E5F400DED4A8 /* WhatIsNewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = WhatIsNewCell.xib; sourceTree = "<group>"; };
 		FB15F48223B1FB6600A77829 /* News.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = News.storyboard; sourceTree = "<group>"; };
@@ -266,6 +268,7 @@
 				FBEEA7AD2395066F00252AE7 /* Group.swift */,
 				FBC7D45423A2129000DD557E /* Message.swift */,
 				FBC7D45A23A2300F00DD557E /* News.swift */,
+				7603D92B23CBAED500280F80 /* Session.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -374,6 +377,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FBE037DA23AF1EA30037A496 /* LoginViewController.swift in Sources */,
+				7603D92C23CBAED500280F80 /* Session.swift in Sources */,
 				FBC7D45223A14D8D00DD557E /* MessageCell.swift in Sources */,
 				FBE7A7992394D333002B67E2 /* GroupCell.swift in Sources */,
 				FBE7A79B2394D6D1002B67E2 /* SearchGroupList.swift in Sources */,
