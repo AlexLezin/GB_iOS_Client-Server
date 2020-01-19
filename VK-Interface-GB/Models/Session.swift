@@ -15,4 +15,6 @@ class Session {
     
     var userId = 0
     var token = ""
+    
+    
 }

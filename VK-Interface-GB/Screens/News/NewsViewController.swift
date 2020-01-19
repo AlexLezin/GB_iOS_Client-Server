@@ -8,6 +8,8 @@ class NewsViewController: UITableViewController {
     
     override func viewDidLoad() {
         newsCellRegister()
+        
+        URLPost()
     }
     
     // Регистрируем шаблон новости
