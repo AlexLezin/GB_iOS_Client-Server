@@ -1,141 +1,85 @@
-
-//  Created by Евгений Никитин on 23.11.2019.
-//  Copyright © 2019 Evel-Devel. All rights reserved.
-
+//
+//  LoginViewController.swift
+//  VK-Interface-GB
+//
+//  Created by Alexander Lezin on 19.01.2020.
+//  Copyright © 2020 Evel-Devel. All rights reserved.
+//
 
 import UIKit
-
-// TODO:
-// кстати, а если вы попробуете реализовать какой-то базовый класс, class CustomNavigationBarConroller: UIViewController в нем реализовать метод для навигейшен бара. Каждый экран наследовать от этого контроллера и вызывать его функцию для обновления навигейшена?
-
-// Страница авторизации:
-// Запретить альбомную ориентацию на этом вью-контроллере
-// Скрывать знаки в поле пароля
+import WebKit
 
 class LoginViewController: UIViewController {
     
-    
-    // MARK: - Добавляем Outlets & Buttons
-    @IBOutlet weak var scrollView: UIScrollView!
-    @IBOutlet weak var loginInput: UITextField!
-    @IBOutlet weak var passwordInput: UITextField!
-    @IBOutlet weak var logo: UIImageView!
-    @IBOutlet weak var graySeparatorLine: UIView!
-    @IBOutlet weak var loginButtonOutlet: UIButton!
-    @IBAction func loginButton(_ sender: Any) { }
-    
-    // Констрейнт высоты нашей серой линии разделения (между полями)
-    @IBOutlet weak var heightOfGrayLine: NSLayoutConstraint!
-    
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        hideKeyboardOnTap()
-        makeThinGrayLine()
-        changePlaceholderText()
-    }
-    
-    
-    // Конфигурируем текст плейсхолдеров
-    func changePlaceholderText() {
-        // Текст логина
-        loginInput.attributedPlaceholder = NSAttributedString(string: "Email или телефон", attributes: [
-            .foregroundColor: UIColor.gray,
-            .font: UIFont.systemFont(ofSize: 16.0, weight: .light)
-        ])
-        // Текст пароля
-        passwordInput.attributedPlaceholder = NSAttributedString(string: "Пароль", attributes: [
-            .foregroundColor: UIColor.gray,
-            .font: UIFont.systemFont(ofSize: 16.0, weight: .light)
-        ])
-    }
-    
-    // Задаем реальную высоту в один пиксель (серой линии)
-    func makeThinGrayLine() {
-        heightOfGrayLine.constant =  1.0 / UIScreen.main.scale
-    }
-    
-    // Белый цвет текста у status bar
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
-    }
-    
-    
-    // MARK: - Метод "Скрыть клавиатуру"
-    func hideKeyboardOnTap() {
-        let hideAction = UITapGestureRecognizer(target: self, action: #selector(hideKeyboard))
-        view.addGestureRecognizer(hideAction)
-    }
-    
-    @objc func hideKeyboard() {
-        view.endEditing(true)
-    }
-    
-    
-    // MARK: - Проверка введенных логина и пароля
-    // Основная проверка, "должны ли мы запустить переход?"
-    override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
-        let checkResult = checkUserData()
-        if !checkResult { showLoginError() }
-        return checkResult
-    }
-    
-    // Проверка полей
-    func checkUserData() -> Bool {
-        guard let login = loginInput.text, let password = passwordInput.text else { return false }
-        // Для удобства во время тестов, ничего вводить не нужно (иначе можно заколебаться)
-        if login == "" && password == "" {
-            return true
-        } else {
-            return false
+    @IBOutlet weak var webview: WKWebView! {
+        didSet {
+            webview.navigationDelegate = self
         }
     }
     
-    // Создаем окно ошибки
-    func showLoginError() {
-        // Создаем контроллер
-        let alter = UIAlertController(title: "Ошибка", message: "Введены не верные данные пользователя", preferredStyle: .alert)
-        // Создаем кнопку для UIAlertController
-        let action = UIAlertAction(title: "OK", style: .cancel, handler: nil)
-        // Добавляем кнопку на UIAlertController
-        alter.addAction(action)
-        // Показываем UIAlertController
-        present(alter, animated: true, completion: nil)
-    }
-    
-    
-    // MARK: - Изменение высоты ScrollView при появлении и исчезновении клавиатуры
-    // Клавиатура появляется
-    @objc func keyboardWasShown(notification: Notification) {
-        // Получаем размер клавиатуры
-        let info = notification.userInfo! as NSDictionary
-        let kbSize = (info.value(forKey: UIResponder.keyboardFrameEndUserInfoKey) as! NSValue).cgRectValue.size
-        let contentInsets = UIEdgeInsets(top: 0.0, left: 0.0, bottom: kbSize.height, right: 0.0)
-        // Добавляем отступ внизу UIScrollView, равный размеру клавиатуры
-        self.scrollView?.contentInset = contentInsets
-        scrollView?.scrollIndicatorInsets = contentInsets
-    }
-    
-    // Клавиатура исчезает
-    @objc func keyboardWillBeHidden(notification: Notification) {
-        // Устанавливаем отступ внизу UIScrollView, равный 0
-        let contentInsets = UIEdgeInsets.zero
-        scrollView?.contentInset = contentInsets
-    }
-    
-    // Сообщения из центра уведомлений
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        // Подписываемся на два уведомления: одно приходит при появлении клавиатуры
-        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWasShown), name: UIResponder.keyboardWillShowNotification, object: nil)
-        // Второе — когда она пропадает
-        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillBeHidden(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
-    }
-
-    // Отписка от уведомлений при исчезновении контроллера с экрана
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+    override func viewDidLoad() {
+        
+        var urlComponents = URLComponents()
+        urlComponents.scheme = "https"
+        urlComponents.host = "oauth.vk.com"
+        urlComponents.path = "/authorize"
+        urlComponents.queryItems = [
+            URLQueryItem(name: "client_id", value: "7287106"),
+            URLQueryItem(name: "display", value: "mobile"),
+            URLQueryItem(name: "redirect_uri", value: "https://oauth.vk.com/blank.html"),
+            URLQueryItem(name: "scope", value: "262150"),
+            URLQueryItem(name: "response_type", value: "token"),
+            URLQueryItem(name: "revoke", value: "1"),
+        ]
+        let request = URLRequest(url: urlComponents.url!)
+        
+        webview.load(request)
+        
     }
 }
+
+extension LoginViewController: WKNavigationDelegate {
+    func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse, decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
+        
+        guard let url = navigationResponse.response.url,
+            url.path == "/blank.html",
+            let fragment = url.fragment else {
+            decisionHandler(.allow)
+            return
+        }
+        
+        let params = fragment
+            .components(separatedBy: "&")
+            .map { $0.components(separatedBy: "=") }
+            .reduce([String: String]()) { result, param in
+                var dict = result
+                let key = param[0]
+                let value = param[1]
+                dict[key] = value
+                return dict
+        }
+        
+        guard let token = params["access_token"] else {
+            return
+        }
+        guard let userId = params["user_id"] else {
+            return
+        }
+        
+        Session.shared.token = token
+        Session.shared.userId = Int(userId) ?? 0
+        
+        print(Session.shared.token, Session.shared.userId)
+        
+        let api = VKapi()
+        
+        api.getFriendsList(token: Session.shared.token)
+        api.getPhotos(token: Session.shared.token)
+        api.getGroups(token: Session.shared.token)
+        api.getGroupsSearch(token: Session.shared.token)
+        
+        decisionHandler(.cancel)
+    }
+}
+
+
